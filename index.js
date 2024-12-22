@@ -21,14 +21,19 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    const queryCollection = client.db("smartpicksDB").collection("queries");
+
+    app.post("/add-queries", async (req, res) => {
+      const query = req.body;
+      const result = await queryCollection.insertOne(query);
+      console.log(query);
+      res.send(result);
+    });
+
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
-
-    app.get("/queries", (req, res) => {
-      res.send("new route");
-    });
 
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
