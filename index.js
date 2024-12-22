@@ -23,10 +23,17 @@ async function run() {
   try {
     const queryCollection = client.db("smartpicksDB").collection("queries");
 
+    //Creating New Queries
     app.post("/add-queries", async (req, res) => {
       const query = req.body;
       const result = await queryCollection.insertOne(query);
       console.log(query);
+      res.send(result);
+    });
+
+    //Showing Queries in the client site
+    app.get("/add-queries", async (req, res) => {
+      const result = await queryCollection.find().toArray();
       res.send(result);
     });
 
