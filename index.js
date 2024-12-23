@@ -54,12 +54,6 @@ async function run() {
     });
 
     //Update a specific query
-    // app.get("/queries/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await queryCollection.findOne(query);
-    //   res.send(result);
-    // });
     app.get("/query/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -67,6 +61,18 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/update-query/:id", async (req, res) => {
+      const id = req.params.id;
+      const queryData = req.body;
+      const updated = {
+        $set: queryData,
+      };
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const result = await queryCollection.updateOne(query, updated, options);
+      console.log(result);
+      res.send(result);
+    });
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
