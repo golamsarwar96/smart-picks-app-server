@@ -22,6 +22,9 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const queryCollection = client.db("smartpicksDB").collection("queries");
+    const recommendationCollection = client
+      .db("smartpicksDB")
+      .collection("recommendations");
 
     //Creating New Queries
     app.post("/add-queries", async (req, res) => {
@@ -71,6 +74,14 @@ async function run() {
       const options = { upsert: true };
       const result = await queryCollection.updateOne(query, updated, options);
       console.log(result);
+      res.send(result);
+    });
+
+    //recommendation collection
+    app.post("/add-recommendation", async (req, res) => {
+      const query = req.body;
+      const result = await recommendationCollection.insertOne(query);
+      console.log(query);
       res.send(result);
     });
     // Connect the client to the server	(optional starting in v4.7)
