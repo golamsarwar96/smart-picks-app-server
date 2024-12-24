@@ -84,6 +84,12 @@ async function run() {
       console.log(query);
       res.send(result);
     });
+
+    //All recommendations here
+    app.get("/add-recommendation", async (req, res) => {
+      const result = await recommendationCollection.find().toArray();
+      res.send(result);
+    });
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
