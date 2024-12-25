@@ -36,6 +36,9 @@ async function run() {
 
     //Showing Queries in the client site
     app.get("/add-queries", async (req, res) => {
+      // const search = req.query.search;
+      // console.log(search);
+      // let query = { $regex: new RegExp(query, "i") };
       const result = await queryCollection.find().toArray();
       res.send(result);
     });
