@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
@@ -14,6 +15,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.i16dm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -25,6 +27,17 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+const verifyToken = (req, res, next) => {
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).send({ message: "Unauthorized Access" });
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) return res.status(403).send({ message: "Forbidden Access" });
+    req.user = decoded;
+  });
+  console.log(token);
+  next();
+};
 
 async function run() {
   try {
@@ -70,7 +83,7 @@ async function run() {
     });
 
     //Showing Queries in the client site
-    app.get("/add-queries", async (req, res) => {
+    app.get("/add-queries", verifyToken, async (req, res) => {
       // const search = req.query.search;
       // console.log(search);
       // let query = { $regex: new RegExp(query, "i") };
@@ -79,8 +92,16 @@ async function run() {
     });
 
     //Get all queries posted by a specific user
-    app.get("/queries/:email", async (req, res) => {
+    app.get("/queries/:email", verifyToken, async (req, res) => {
+      const decodedEmail = req.user?.email;
+      console.log(req.ph);
       const email = req.params.email;
+      if (decodedEmail !== email) {
+        return res
+          .status(401)
+          .send({ message: "You are not authorized to view this content" });
+      }
+
       const query = { "buyer.user_email": email };
       const result = await queryCollection.find(query).toArray();
       res.send(result);
@@ -144,6 +165,11 @@ async function run() {
     app.get("/recommendation/:email", async (req, res) => {
       const email = req.params.email;
       const query = { rc_email: email };
+      // if (decodedEmail !== email) {
+      //   return res
+      //     .status(401)
+      //     .send({ message: "You are not authorized to view this content" });
+      // }
       const result = await recommendationCollection.find(query).toArray();
       res.send(result);
     });
