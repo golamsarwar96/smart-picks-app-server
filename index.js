@@ -116,6 +116,18 @@ async function run() {
     app.delete("/recommendation/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
+      //get the product that we have recommended. Cause we are specifically changing a products recommended value.
+      const recommendationToDelete = await recommendationCollection.findOne(
+        query
+      );
+      if (recommendationToDelete) {
+        const filter = { _id: new ObjectId(recommendationToDelete.queryID) };
+        const update = {
+          $inc: { recommendedCount: -1 },
+        };
+        const updateResult = await queryCollection.updateOne(filter, update);
+        console.log(updateResult);
+      }
       const result = await recommendationCollection.deleteOne(query);
       res.send(result);
     });
