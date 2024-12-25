@@ -84,6 +84,17 @@ async function run() {
     app.post("/add-recommendation", async (req, res) => {
       const query = req.body;
       const result = await recommendationCollection.insertOne(query);
+
+      const filter = { _id: new ObjectId(query.queryID) };
+      console.log(filter);
+      const update = {
+        $inc: { recommendedCount: 1 },
+      };
+      const updateRecommendCount = await queryCollection.updateOne(
+        filter,
+        update
+      );
+      console.log(updateRecommendCount);
       console.log(query);
       res.send(result);
     });
