@@ -8,7 +8,11 @@ const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: [
+    "http://localhost:5173",
+    "https://smart-picks-f7293.web.app",
+    "https://smart-picks-f7293.firebaseapp.com/",
+  ],
   credentials: true,
   optionalSuccessStatus: 200,
 };
@@ -35,7 +39,7 @@ const verifyToken = (req, res, next) => {
     if (err) return res.status(403).send({ message: "Forbidden Access" });
     req.user = decoded;
   });
-  console.log(token);
+  // console.log(token);
   next();
 };
 
@@ -53,7 +57,7 @@ async function run() {
       const token = jwt.sign(email, process.env.SECRET_KEY, {
         expiresIn: "365d",
       });
-      console.log(token);
+      // console.log(token);
       res
         .cookie("token", token, {
           httpOnly: true,
@@ -78,12 +82,12 @@ async function run() {
     app.post("/add-queries", async (req, res) => {
       const query = req.body;
       const result = await queryCollection.insertOne(query);
-      console.log(query);
+      // console.log(query);
       res.send(result);
     });
 
     //Showing Queries in the client site
-    app.get("/add-queries", verifyToken, async (req, res) => {
+    app.get("/add-queries", async (req, res) => {
       // const search = req.query.search;
       // console.log(search);
       // let query = { $regex: new RegExp(query, "i") };
@@ -94,7 +98,7 @@ async function run() {
     //Get all queries posted by a specific user
     app.get("/queries/:email", verifyToken, async (req, res) => {
       const decodedEmail = req.user?.email;
-      console.log(req.ph);
+      // console.log(req.ph);
       const email = req.params.email;
       if (decodedEmail !== email) {
         return res
@@ -132,7 +136,7 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const result = await queryCollection.updateOne(query, updated, options);
-      console.log(result);
+      // console.log(result);
       res.send(result);
     });
 
@@ -142,7 +146,7 @@ async function run() {
       const result = await recommendationCollection.insertOne(query);
 
       const filter = { _id: new ObjectId(query.queryID) };
-      console.log(filter);
+      // console.log(filter);
       const update = {
         $inc: { recommendedCount: 1 },
       };
@@ -150,8 +154,8 @@ async function run() {
         filter,
         update
       );
-      console.log(updateRecommendCount);
-      console.log(query);
+      // console.log(updateRecommendCount);
+      // console.log(query);
       res.send(result);
     });
 
@@ -162,18 +166,20 @@ async function run() {
     });
 
     //get all recommendation posted by a user.
-    app.get("/recommendation/:email", async (req, res) => {
+    app.get("/recommendation/:email", verifyToken, async (req, res) => {
+      const decodedEmail = req.user?.email;
       const email = req.params.email;
       const query = { rc_email: email };
-      // if (decodedEmail !== email) {
-      //   return res
-      //     .status(401)
-      //     .send({ message: "You are not authorized to view this content" });
-      // }
+      if (decodedEmail !== email) {
+        return res
+          .status(401)
+          .send({ message: "You are not authorized to view this content" });
+      }
       const result = await recommendationCollection.find(query).toArray();
       res.send(result);
     });
 
+    //Deleting my recommendations and decreasing the count of recommendation for a particular product
     app.delete("/recommendation/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -187,7 +193,7 @@ async function run() {
           $inc: { recommendedCount: -1 },
         };
         const updateResult = await queryCollection.updateOne(filter, update);
-        console.log(updateResult);
+        // console.log(updateResult);
       }
       const result = await recommendationCollection.deleteOne(query);
       res.send(result);
