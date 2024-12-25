@@ -50,6 +50,17 @@ async function run() {
         .send({ success: true });
     });
 
+    //Clear Cookie from browser
+    app.get("/logout", async (req, res) => {
+      res
+        .clearCookie("token", {
+          maxAge: 0,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        })
+        .send({ success: true });
+    });
+
     //Creating New Queries
     app.post("/add-queries", async (req, res) => {
       const query = req.body;
