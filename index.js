@@ -96,15 +96,15 @@ async function run() {
     });
 
     //Get all queries posted by a specific user
-    app.get("/queries/:email", verifyToken, async (req, res) => {
-      const decodedEmail = req.user?.email;
+    app.get("/queries/:email", async (req, res) => {
+      // const decodedEmail = req.user?.email;
       // console.log(req.ph);
       const email = req.params.email;
-      if (decodedEmail !== email) {
-        return res
-          .status(401)
-          .send({ message: "You are not authorized to view this content" });
-      }
+      // if (decodedEmail !== email) {
+      //   return res
+      //     .status(401)
+      //     .send({ message: "You are not authorized to view this content" });
+      // }
 
       const query = { "buyer.user_email": email };
       const result = await queryCollection.find(query).toArray();
@@ -166,15 +166,15 @@ async function run() {
     });
 
     //get all recommendation posted by a user.
-    app.get("/recommendation/:email", verifyToken, async (req, res) => {
-      const decodedEmail = req.user?.email;
+    app.get("/recommendation/:email", async (req, res) => {
+      // const decodedEmail = req.user?.email;
       const email = req.params.email;
       const query = { rc_email: email };
-      if (decodedEmail !== email) {
-        return res
-          .status(401)
-          .send({ message: "You are not authorized to view this content" });
-      }
+      // if (decodedEmail !== email) {
+      //   return res
+      //     .status(401)
+      //     .send({ message: "You are not authorized to view this content" });
+      // }
       const result = await recommendationCollection.find(query).toArray();
       res.send(result);
     });
