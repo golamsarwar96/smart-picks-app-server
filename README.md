@@ -1,4 +1,8 @@
-# Project Name : Smart Picks 📦
+<div>
+  <img src="https://i.ibb.co.com/NdFqdpQY/smartpicksss.png"/>
+</div>
+
+# Project Name: Smart Picks 📦
 
 The server-side implementation of a Product Recommendation Platform "Smart Picks" built with Express.js, MongoDB, and JWT for authentication. The backend provides RESTful APIs to manage queries, recommendations, while handling authentication and secure cookie management using cookie-parser.
 
@@ -16,6 +20,34 @@ The server-side implementation of a Product Recommendation Platform "Smart Picks
 Database: MongoDB <br/>
 Authentication: JWT (JSON Web Tokens) <br/>
 Middleware: CORS, cookie-parser <br/>
+
+## Installation
+
+### **1. Clone the Repository**  
+```sh
+git clone https://github.com/golamsarwar96/smart-picks-app-server.git
+```
+### **2. Install Dependencies**
+
+```sh
+npm install
+```
+### **3. Environment Configuration**
+Create a .env file in the project root and add the following environment variables <br/>
+
+```sh
+# Database Configuration
+MONGO_URI=mongodb://localhost:27017/smartpicksDB
+
+# JWT Secret for Authentication
+JWT_SECRET=your_jwt_secret_key
+
+```
+
+### **4. Run the Project**
+```sh
+npm run dev
+```
 
 ## LIVE LINK: 🌐
 
