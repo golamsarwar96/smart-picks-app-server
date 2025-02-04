@@ -17,9 +17,9 @@ The server-side implementation of a Product Recommendation Platform "Smart Picks
 ## Tech Stack 👨🏻‍💻
 
 • Framework: Express.js <br/>
-Database: MongoDB <br/>
-Authentication: JWT (JSON Web Tokens) <br/>
-Middleware: CORS, cookie-parser <br/>
+• Database: MongoDB <br/>
+• Authentication: JWT (JSON Web Tokens) <br/>
+• Middleware: CORS, cookie-parser <br/>
 
 ## Installation
 
